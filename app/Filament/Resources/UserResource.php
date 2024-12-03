@@ -6,9 +6,13 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -46,12 +50,16 @@ class UserResource extends Resource
                     ->label('Password'),
                 Forms\Components\Select::make('gender')
                     ->options([
-                        'male' => 'Male',
-                        'female' => 'Female',
+                        '0' => 'Male',
+                        '1' => 'Female',
                     ])
                     ->label('Gender'),
                 Forms\Components\DatePicker::make('birth_date')
                     ->label('Birth Date'),
+
+                Toggle::make('active'),
+                SpatieMediaLibraryFileUpload::make('image')
+                    ->collection('users')
             ]);
     }
 
@@ -61,10 +69,12 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Name'),
+                SpatieMediaLibraryImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('email')->label('Email'),
                 Tables\Columns\TextColumn::make('phone')->label('Phone'),
-                Tables\Columns\TextColumn::make('gender')->label('Gender'),
-                Tables\Columns\TextColumn::make('birth_date')->label('Birth Date')->date(),
+                Tables\Columns\TextColumn::make('active')->label('Active')->badge(),
+                BooleanColumn::make('active')->label('Active'),
+
             ])
             ->filters([
                 //
