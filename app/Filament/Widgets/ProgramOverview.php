@@ -52,7 +52,10 @@ class ProgramOverview extends BaseWidget
 
 
         // $total = Course::sum('price');
-        $total = Course::get()->sum(function ($course) {
+        $total = Course::whereBetween('start_date', [
+            Carbon::parse("{$year}-01-01")->startOfYear(),
+            Carbon::parse("{$year}-01-01")->endOfYear(),
+        ])->get()->sum(function ($course) {
             return $course->totalPrice();
         });
 
