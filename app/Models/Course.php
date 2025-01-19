@@ -37,7 +37,7 @@ class Course extends Model
         'end_date',
     ];
 
-    public function getLocationsAttribute($value)
+    public function getLocationAttribute($value)
     {
         switch ($value) {
             case 1:
@@ -55,6 +55,18 @@ class Course extends Model
             case 1:
                 return self::TYPE_CORPORATE;
         }
+
+    }
+
+    public function setTypeAttribute($value)
+    {
+        switch ($value) {
+            case self::TYPE_PUBLIC:
+                return $this->attributes['type'] = 0;
+            case self::TYPE_CORPORATE:
+                return $this->attributes['type'] = 1;
+        }
+        
     }
 
     public function getIsPublicAttribute(): bool
@@ -63,6 +75,12 @@ class Course extends Model
     }
 
     public function sumTraineePayments()
+    {
+        return $this->traineePayments()->sum('amount');
+    }
+
+
+    public function getPaymentsAttribute()
     {
         return $this->traineePayments()->sum('amount');
     }
@@ -128,6 +146,24 @@ class Course extends Model
         return $this->isPublic ? $this->userPrice() : $this->price;
     }
 
+    public function totalPrice()
+    {
+        return $this->isPublic ? $this->userPrice() : $this->price;
+    }
+
+    public function getCompanyNameAttribute()
+    {
+        return $this->company->name ?? "";
+    }
+
+    
+
+
+    public function getLeaderNameAttribute()
+    {
+        return $this->leader->name ?? "";
+    }
+
     public function allTrainees(): BelongsToMany
     {
         return $this->belongsToMany(Trainee::class, 'courses_trainees', 'course_id', 'user_id');
@@ -136,5 +172,14 @@ class Course extends Model
     public function leader(): BelongsTo
     {
         return $this->belongsTo(Supervisor::class, 'lead_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function pays(){
+        return $this->hasMany(Payment::class);
     }
 }

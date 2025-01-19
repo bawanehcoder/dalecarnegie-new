@@ -20,15 +20,15 @@ class SupervisorResource extends Resource
     protected static ?string $model = Supervisor::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Supervisor';
-    protected static ?string $label = 'Supervisor';
+    protected static ?string $navigationLabel = 'Lead Account Manager';
+    protected static ?string $label = 'Lead Account Manager';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')
-                ->columnSpan(2)
+                    ->columnSpan(2)
                     ->required()
                     ->maxLength(255),
             ]);
@@ -39,7 +39,31 @@ class SupervisorResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
-                
+                TextColumn::make('revenue')
+                    ->getStateUsing(function ($record) {
+                        return 'JOD ' . $record->revenue();
+                    }),
+
+                TextColumn::make('clients')
+                    ->getStateUsing(function ($record) {
+                        return $record->clients();
+                    }),
+
+                TextColumn::make('courses')
+                    ->getStateUsing(function ($record) {
+                        return $record->courses();
+                    }),
+
+                    TextColumn::make('days')
+                    ->getStateUsing(function ($record) {
+                        return $record->days();
+                    }),
+
+                    TextColumn::make('participants')
+                    ->getStateUsing(function ($record) {
+                        return $record->users();
+                    }),
+
             ])
             ->filters([
                 //

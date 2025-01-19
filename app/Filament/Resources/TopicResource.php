@@ -29,7 +29,7 @@ class TopicResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                ->columnSpan(2)
+                    ->columnSpan(2)
                     ->required()
                     ->maxLength(255),
             ]);
@@ -40,7 +40,25 @@ class TopicResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
-                
+                TextColumn::make('revenue')
+                    ->getStateUsing(function ($record) {
+                        return 'JOD ' . $record->revenue();
+                    }),
+
+                TextColumn::make('clients')
+                    ->getStateUsing(function ($record) {
+                        return $record->clients();
+                    }),
+
+
+
+                TextColumn::make('days')
+                    ->getStateUsing(function ($record) {
+                        return $record->days();
+                    }),
+
+
+
             ])
             ->filters([
                 //

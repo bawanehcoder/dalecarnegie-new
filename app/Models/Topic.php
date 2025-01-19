@@ -23,4 +23,17 @@ class Topic extends Model
     {
         return $this->belongsToMany(Course::class)->withTimestamps();
     }
+
+    public function revenue(){
+        return $this->courses->sum('price');
+    }
+
+    public function days(){
+        return $this->courses->sum('duration');
+    }
+
+    public function clients(){
+        return $this->courses()->distinct('company_id')->count('company_id');
+
+    }
 }

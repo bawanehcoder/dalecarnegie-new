@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ParticipantResource\Pages;
 use App\Filament\Resources\ParticipantResource\RelationManagers;
+use App\Models\Company;
+use App\Models\CompanyUser;
 use App\Models\Participant;
 use App\Models\Trainee;
 use App\Models\User;
@@ -20,6 +22,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -45,10 +48,10 @@ class ParticipantResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
+
+                    TextInput::make('email')
+                    ->email(),
+                
                 TextInput::make('phone')
                     ->tel()
                     ->maxLength(15),
@@ -58,27 +61,23 @@ class ParticipantResource extends Resource
                         '1' => 'Female',
                     ])
                     ->required(),
-                DatePicker::make('birth_date')
-                    ->required(),
-                TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('fees')
-                    ->numeric()
-                    ->required(),
+                // DatePicker::make('birth_date')
+                //     ->required(),
+                
+                
                 Select::make('client')
                     ->label('Client')
                     ->preload()
                     ->searchable()
                     ->relationship('companies', 'name'),
+                    Toggle::make('active'),
                 
                 SpatieMediaLibraryFileUpload::make('certificates')
                     ->multiple()
                     ->collection('users'),
                 SpatieMediaLibraryFileUpload::make('image')
                     ->collection('users'),
-                Toggle::make('active'),
+                
             ]);
     }
 
@@ -89,14 +88,21 @@ class ParticipantResource extends Resource
                 TextColumn::make('name')->sortable()->searchable(),
                 SpatieMediaLibraryImageColumn::make('image'),
 
-                TextColumn::make('email')->sortable()->searchable(),
+                TextColumn::make('company.user.name')
+                ->label('Client')
+                
+                ->getStateUsing(function ($record) {
+                    return  Company::find(CompanyUser::where('user_id', $record->id)->first()?->company_id)->name ?? "";
+                }),
                 TextColumn::make('phone')->sortable()->searchable(),
                 BooleanColumn::make('active')->label('Active'),
 
             ])
             ->filters([
-                //
-            ])
+                
+
+            ], FiltersLayout::AboveContent)
+            
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

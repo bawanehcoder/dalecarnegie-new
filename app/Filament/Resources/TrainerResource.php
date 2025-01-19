@@ -43,10 +43,7 @@ class TrainerResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
+                
                 TextInput::make('phone')
                     ->tel()
                     ->maxLength(15),
@@ -58,10 +55,7 @@ class TrainerResource extends Resource
                     ->required(),
                 DatePicker::make('birth_date')
                     ->required(),
-                TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+                
                 TextInput::make('fees')
                     ->numeric()
                     ->required(),

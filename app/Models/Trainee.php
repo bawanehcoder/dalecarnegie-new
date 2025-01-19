@@ -52,4 +52,8 @@ class Trainee extends User
         return $this->belongsToMany(Course::class, 'courses_trainees', 'user_id')
             ->withPivotValue('price', 0);
     }
+
+    public function company(){
+        return $this->belongsTo(CompanyUser::class,'user_id');
+    }
 }
